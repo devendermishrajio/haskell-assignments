@@ -46,3 +46,18 @@ ram n = give_ram 1700 n
         where
                 give_ram x 0 = (x-1)
                 give_ram x n = if is_ram x then give_ram (x+1) (n-1) else give_ram (x+1) n
+
+
+cube_root n = floor (n ** (1/3))
+is_ram n = length [a| a<-[1..crn], b<-[(a+1)..crn], c<-[(a+1)..crn], d<-[(c+1)..crn], a*a*a + b*b*b == n && c*c*c + d*d*d == n] /= 0
+        where
+                crn = floor (n ** (1/3))
+-- nlist = [i| i<-[1..100000], is_ram i]
+
+give_ram x 0 = x
+give_ram x n = if is_ram x then give_ram x (n-1) else give_ram (x+1) n
+
+ram n = give_ram 1 n
+        where
+                give_ram x 0 = (x-1)
+                give_ram x n = if is_ram x then give_ram (x+1) (n-1) else give_ram (x+1) n
