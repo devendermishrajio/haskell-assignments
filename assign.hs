@@ -35,3 +35,14 @@ mat_mult m n = map (\x -> map (\y -> foldl (+) 0 (zipWith (*) x y)) nt) m
         where
                 nt = trans_mat n
 
+cube_root n = last ([i|i<-[1..(n)],i*i*i<=n])
+is_ram n = length [a| a<-[1..(cube_root n)], b<-[(a+1)..(cube_root n)], c<-[(a+1)..(cube_root n)], d<-[(c+1)..(cube_root n)], a*a*a + b*b*b == n && c*c*c + d*d*d == n] /= 0
+nlist = [i| i<-[1..100000], is_ram i]
+
+give_ram x 0 = x
+give_ram x n = if is_ram x then give_ram x (n-1) else give_ram (x+1) n
+
+ram n = give_ram 1700 n
+        where
+                give_ram x 0 = (x-1)
+                give_ram x n = if is_ram x then give_ram (x+1) (n-1) else give_ram (x+1) n
