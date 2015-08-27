@@ -61,3 +61,50 @@ ram n = give_ram 1 n
         where
                 give_ram x 0 = (x-1)
                 give_ram x n = if is_ram x then give_ram (x+1) (n-1) else give_ram (x+1) n
+
+
+-- most likely final
+merge [] bs = bs
+merge as [] = as
+merge as@(a:at) bs@(b:bt)
+	= case compare a b of
+	LT -> a : merge at bs
+	EQ -> a : b : merge at bt
+	GT -> b : merge as bt
+
+cubes a = first ++ (rest `merge` cubes (a+1))
+ where
+	s = (a+1)^3 + (a+2)^3
+	first = span (\x -> x < s) [a^3 + b^3 | b<- [(a+1)..]]
+
+sameSum x y = x == y
+rjgroups = groupBy sameSum $ cubes 1
+rjnumbers = filter (\g -> length g > 1) rjgroups
+ramanujan n = (init (last (take n rjnumbers)))!!0
+
+is_matrix (x:[]) = (length x) /= 0
+is_matrix [] = False
+is_matrix (x:y:xs) = (length x) == (length y) && (is_matrix (y:xs))
+
+is_square_matrix n = (is_matrix n) && ((length (n!!0)) == (length n))
+
+
+addable m n = (is_matrix n) && (is_matrix m) && ((length n) == (length m)) && ((length (n!!0)) == (length (m!!0)))
+
+add_matrix m n = if addable m n then zipWith (zipWith (+)) m n else [[]]
+
+multiplyable m n = is_matrix m && is_matrix n && num_cols m == num_rows n
+	where
+		num_cols x = length (x!!0)
+		num_rows x = length x
+
+make_list m = map (\x -> (map (\y -> y:[]) x)) m
+trans_mat m = foldl (\acc x -> zipWith (++) acc x) (head ls) (tail ls)
+                where
+                        ls = make_list m
+
+multiply_matrix m n = if multiplyable m n then mat_mult m n else [[]]
+	where
+		mat_mult m n = map (\x -> map (\y -> foldl (+) 0 (zipWith (*) x y)) nt) m
+        		where
+		                nt = trans_mat n
