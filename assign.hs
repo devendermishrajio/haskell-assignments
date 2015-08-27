@@ -26,3 +26,12 @@ add_matrix m n = if addable m n then add_matrix_sub m n else [[]]
 			where
 				add_list (x:[]) (y:[]) = [x+y]
 				add_list (x:xs) (y:ys) = (x+y):add_list xs ys
+
+make_list m = map (\x -> (map (\y -> y:[]) x)) m
+trans_mat m = foldl (\acc x -> zipWith (++) acc x) (head ls) (tail ls)
+                where
+                        ls = make_list m
+mat_mult m n = map (\x -> map (\y -> foldl (+) 0 (zipWith (*) x y)) nt) m
+        where
+                nt = trans_mat n
+
